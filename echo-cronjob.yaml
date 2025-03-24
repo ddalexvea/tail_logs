@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: echo-app-cronjob
+spec:
+  schedule: "*/6 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: echo-app
+          annotations:
+            ad.datadoghq.com/echo-bash.logs: '[{"source":"echo-app","service":"echo-app"}]'
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: echo-bash
+              image: busybox
+              env:
+                - name: DD_SERVICE
+                  value: "www.echo.app"           #For workloadmeta-container
+                - name: DD_ENV
+                  value: "dev"
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  duration=$(shuf -i 360-600 -n 1)
+                  start=$(date +%s)
+                  end=$((start + duration))
+                  echo "Running for $duration seconds..."
+                  while [ "$(date +%s)" -lt "$end" ]; do
+                    echo "Hello from $(hostname) at $(date)"
+                    sleep 10
+                  done
+                  echo "Done after $duration seconds."
