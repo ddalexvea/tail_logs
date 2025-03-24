@@ -1,0 +1,25 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  site: datadoghq.com
+  clusterName: minikube-multinode
+  # Disable kubelet TLS Verification in minikube
+  kubelet:
+    tlsVerify: false
+  kubeStateMetricsCore:
+    enabled: true
+  orchestratorExplorer:
+    enabled: true
+  logs:
+    enabled: true
+    containerCollectAll: true
+  apm:
+    socketEnabled: true
+    portEnabled: true
+  processAgent:
+    enabled: true
+    processCollection: true
+  # These 3 integrations error by default in minikube
+  ignoreAutoConfig:
+    - etcd
+    - kube_controller_manager 
+    - kube_scheduler 
